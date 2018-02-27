@@ -1,0 +1,9 @@
+[submodule "externals/manyso"]
+	path = externals/manyso
+	url = https://github.com/usnistgov/manyso
+[submodule "externals/REFPROP-headers"]
+	path = externals/REFPROP-headers
+	url = https://github.com/CoolProp/REFPROP-headers
+[submodule "externals/boost-cmake"]
+	path = externals/boost-cmake
+	url = https://github.com/Orphis/boost-cmake.git
