@@ -7,7 +7,7 @@ Enter ``REFPROP-manager``.
 
 ``REFPROP-manager`` is, as the name suggests, a manager DLL that allows you to hold multiple copies of the REFPROP DLL in memory.  Common previous workarounds to this problem involved multiple physical copies of the REFPROP dll.  This manager wraps up all the memory management into a package that looks and feels pretty much like the REFPROP dll with only a few small differences.
 
-As motivation, here is a small example in Python of calling the manager class, with a lot of the details hidden away.  What you need to know is that the interface looks, to the user, EXACTLY like the "normal" python wrapper.  Additional examples in C++11 are shown below.
+As motivation, here is a small example in Python of calling the manager class, with a lot of the details hidden away.  What you need to know is that the interface looks, to the user, EXACTLY like the "normal" python wrapper.  Additional examples in C++11 are shown below (work in progress).
 
 ``` python
 # Get this Python module from https://github.com/usnistgov/REFPROP-wrappers/wrappers/python
@@ -67,6 +67,8 @@ The build of the manager is carried out with cmake.  The conventional out-of-sou
 ```
 git clone --recursive https://github.com/usnistgov/REFPROP-manager
 cd REFPROP-manager
+mkdir build
+cd build
 cmake .. -G "Visual Studio 14 2015 Win64"
 cmake --build . --config Release
 ```
