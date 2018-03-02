@@ -74,3 +74,7 @@ cmake --build . --config Release
 ```
 
 When building with visual studio, the output DLL will be in the ``Release`` folder.  For more information on cmake options, please read the cmake documentation.
+
+# Limitations
+
+Each loaded instance of a DLL may require system-, process-, or thread-global resources. For instance on Windows DLLs linked against the static-runtime of Intel-Fortran require a fiber-local-storage-slot per loaded instance. Since the number of fiber-local-storage-slots seems to be limited to 128 per thread (the exact limit is not documented on MSDN; 128 tested for Windows 2016 Server) this puts a strict upper bound to the number of DLLs loaded simultaneously. Linking against the dynamic-runtime of Intel-Fortran does not impose this restrictions. Furthermore, linking against dynamic-runtime versions of Fortran, C and C++ has the benefit of reducing the overall size of used process-memory (another limiting global resource, especially in 32-bit processes).
