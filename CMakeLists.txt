@@ -25,13 +25,15 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/Memo
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 set(NAMEstatic "${NAME}static")
-set(NAMEtest "${NAME}test")
+set(NAMEexample "${NAME}example")
 
-set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/manager.cpp"  "${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/MemoryModule/MemoryModule.c")
+set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/manager.cpp"  
+            "${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/MemoryModule/MemoryModule.c"
+            )
 
-add_executable(${NAMEtest} ${SOURCES} )
-target_compile_definitions(${NAMEtest} PRIVATE -DREFMAN_TEST -DNOT_DLL)
-target_link_libraries(${NAMEtest} PRIVATE Boost::filesystem)
+add_executable(${NAMEexample} ${SOURCES} )
+target_compile_definitions(${NAMEexample} PRIVATE -DREFMAN_TEST -DNOT_DLL)
+target_link_libraries(${NAMEexample} PRIVATE Boost::filesystem)
 
 set(EXPORT_CODE "#define EXPORT_CODE extern \"C\"")
 if (WIN32)
