@@ -36,7 +36,7 @@ Caveats:
 
 * REFPROP reads from file(s) during calls to ``SETUPdll`` or ``REFPROPdll``.  Therefore, instantiation of each of the instances should be done as a *serial* operation.  Afterwards, the flash calculations can be done in parallel.
 * As usual, the bitness of all the DLL must match - the manager, REFPROP, and the calling program must all be 64-bit or 32-bit, no mixing and matching.
-* The manager expects that the ``fluids`` and ``mixtures`` directories will be found in the same directory as the directory that the REFPROP DLL is in.
+* The manager expects that the ``FLUIDS`` and ``MIXTURES`` directories will be found in the same directory as the directory that the REFPROP DLL is in.
 
 # Credits/License
 
