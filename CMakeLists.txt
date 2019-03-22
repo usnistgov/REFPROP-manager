@@ -19,6 +19,7 @@ if (WIN32)
 endif()
 
 # Do some global includes
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/externals/REFPROP-headers")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/MemoryModule")
@@ -31,9 +32,14 @@ set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/manager.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/MemoryModule/MemoryModule.c"
             )
 
-add_executable(${NAMEexample} ${SOURCES} )
-target_compile_definitions(${NAMEexample} PRIVATE -DREFMAN_TEST -DNOT_DLL)
+# THE EXAMPLE
+# -----------
+add_executable(${NAMEexample} ${SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp")
+target_compile_definitions(${NAMEexample} PRIVATE -DNOT_DLL)
 target_link_libraries(${NAMEexample} PRIVATE Boost::filesystem)
+
+# THE SHARED LIBRARY
+# ------------------
 
 set(EXPORT_CODE "#define EXPORT_CODE extern \"C\"")
 if (WIN32)
