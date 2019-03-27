@@ -14,7 +14,7 @@ The code that forms the base of the ``REFPROP-manager`` was written by Ian Bell,
 * The headers for REFPROP come from the [REFPROP-headers](https://github.com/CoolProp/REFPROP-headers) repo (MIT license).
 
 ## In Python
-As motivation, here is a small example in Python of calling the manager class, with a lot of the details hidden away.  What you need to know is that the interface looks, to the user, EXACTLY like the "normal" python wrapper.  Additional examples in C++11 are shown below (work in progress).
+As motivation, here is a small example in Python of calling the manager class, with a lot of the details hidden away.  What you need to know is that the interface looks, to the user, EXACTLY like the "normal" Python wrapper.
 
 In Python:
 ``` python
@@ -42,7 +42,7 @@ for RP in RP1,RP2:
 
 ## In C++11
 
-See the example in ``test/test.cpp``.  You MUST use CMake to ensure that all dependencies are properly included.  A sample call to generate the project and run the example would be:
+See the example in the folder ``test/test.cpp``.  You MUST use CMake to build to ensure that all dependencies are properly included.  A sample command line to generate the project and run the example would be:
 
 ```
 git clone --recursive https://github.com/usnistgov/REFPROP-manager
@@ -52,7 +52,7 @@ cmake .. -G "Visual Studio 14 2015 Win64"
 cmake --build . --config Release --target REFMAN64example
 ```
 
-You may need to change the path to the REFPROP folder in the CPP code
+You may need to change the path to the REFPROP folder in the CPP code, and you may also need to change the generator if you use a different version of Visual Studio (on windows), or use another operating system, in which case the generator is not needed at all.  Please check out the CMake documentation.
 
 # Caveats:
 
