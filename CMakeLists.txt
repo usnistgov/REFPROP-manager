@@ -1,6 +1,9 @@
 project(REFPROPManager)
 cmake_minimum_required(VERSION 3.1)
 
+# We heavily use C++11, C++11 support is required
+set (CMAKE_CXX_STANDARD 11)
+
 add_subdirectory("${CMAKE_SOURCE_DIR}/externals/boost-cmake")
 
 # Determine the name of the library to be built
