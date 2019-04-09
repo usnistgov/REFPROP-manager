@@ -41,7 +41,7 @@ endif()
 add_executable(${NAMEexample} ${SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp")
 target_compile_definitions(${NAMEexample} PRIVATE -DNOT_DLL)
 target_link_libraries(${NAMEexample} PRIVATE Boost::filesystem)
-set_property(TARGET Boost::filesystem PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET Boost_filesystem PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 # THE SHARED LIBRARY
 # ------------------
