@@ -59,3 +59,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/EXPORTS.h.in" "${CMAKE_CURRENT_BINAR
 
 add_library(${NAME} SHARED ${SOURCES})
 target_link_libraries(${NAME} PRIVATE Boost::filesystem)
+if (UNIX)
+  find_package (${CMAKE_DL_LIBS} REQUIRED)
+  target_link_libraries(${NAME} PRIVATE ${CMAKE_DL_LIBS})
+endif()
