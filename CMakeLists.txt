@@ -31,9 +31,10 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 set(NAMEstatic "${NAME}static")
 set(NAMEexample "${NAME}example")
 
-set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/manager.cpp"  
-            "${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/MemoryModule/MemoryModule.c"
-            )
+set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/manager.cpp")
+if (WIN32)
+  list(APPEND SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/MemoryModule/MemoryModule.c")
+endif()
 
 # THE EXAMPLE
 # -----------
