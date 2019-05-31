@@ -15,6 +15,7 @@ int main() {
         int handle = construct_handle(RPPREFIX, "librefprop.so", &handle_errcode, errmsg, 255);
         if (handle_errcode != 0){
             std::cout << "Could not load REFPROP from "+std::string(RPPREFIX)+"; fail!\n";
+            std::cout << errmsg << std::endl;
             return EXIT_FAILURE;
         }
         int ierr = 0;
