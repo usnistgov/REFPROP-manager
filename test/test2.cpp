@@ -14,7 +14,7 @@ int main() {
         char* RPPREFIX = std::getenv("RPPREFIX");
         int handle = construct_handle(RPPREFIX, "librefprop.so", &handle_errcode, errmsg, 255);
         if (handle_errcode != 0){
-            std::cout << "Could not load REFPROP from "+RPPREFIX+"; fail!\n";
+            std::cout << "Could not load REFPROP from "+std::string(RPPREFIX)+"; fail!\n";
             return EXIT_FAILURE;
         }
         int ierr = 0;
