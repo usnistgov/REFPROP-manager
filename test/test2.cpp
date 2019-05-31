@@ -74,7 +74,7 @@ int main() {
     double elap = std::chrono::duration<double>(endTime - startTime).count();
     std::cout << elap << "s parallel\n";
     for (auto i = 0; i < serial_outs.size(); ++i){
-        std::cout << names[i] << ": " << serial_outs[i] << "; "parallel_outs[i] << std::endl;
+        std::cout << names[i] << ": " << serial_outs[i] << "; " << parallel_outs[i] << std::endl;
     }
     return EXIT_SUCCESS;
 }
