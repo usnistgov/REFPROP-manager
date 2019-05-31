@@ -12,9 +12,9 @@ int main() {
         int handle_errcode = 0;
         int handle = construct_handle("D:/Program Files (x86)/REFPROP/", "REFPRP64.dll", &handle_errcode, errmsg, 255);
         int ierr = 0;
-        char hfld[255] = std::string(255, " ");
+        char hfld[255] = std::string(255, " ").c_str();
         strcpy(hfld, names[1].c_str());
-        handle.SETFLUIDSdll(hfld, ierr);
+        handle.SETFLUIDSdll(handle, &handle_errcode, hfld, ierr);
         handles.push_back(handle);
     }
 
