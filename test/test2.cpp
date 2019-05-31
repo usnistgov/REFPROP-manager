@@ -1,9 +1,10 @@
 
 #include "REFPROP-manager/REFPROP-manager.hpp"
+#include <string>
 
 int main() {
 
-    std::vector<string> names = {"METHANE","ETHANE","PROPANE","BUTANE","PENTANE","HEXANE","HEPTANE","OCTANE","NONANE","DECANE"};
+    std::vector<std::string> names = {"METHANE","ETHANE","PROPANE","BUTANE","PENTANE","HEXANE","HEPTANE","OCTANE","NONANE","DECANE"};
 
     // Load 10 instances of REFPROP, and for each one, initialize it in serial(!)
     std::vector<int> handles;
