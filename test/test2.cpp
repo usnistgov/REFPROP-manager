@@ -65,8 +65,8 @@ int main() {
                 int ierr = 0;
                 int handle_errcode = 0;
                 char herr[255];
-                double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325*1e-12, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
-                PQFLSHdll(handle, &handle_errcode, p+count, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
+                double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325+count*1e-12, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
+                PQFLSHdll(handle, &handle_errcode, p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
                 Tavg += T;
             }
             return Tavg;
