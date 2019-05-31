@@ -33,6 +33,8 @@ int main() {
 
     // Now we do a serial evaluation, calculation of the NBP temperature for each one
     std::vector<double> serial_outs;
+    {
+    auto startTime = std::chrono::system_clock::now();
     for (auto handle: handles){
         int kq = 1;
         int ierr = 0;
@@ -42,12 +44,14 @@ int main() {
         PQFLSHdll(handle, &handle_errcode, p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
         serial_outs.push_back(T);
     }
-    for (auto i = 0; i < serial_outs.size(); ++i){
-        std::cout << names[i] << ": " << serial_outs[i];
+    auto endTime = std::chrono::system_clock::now();
+    double elap = std::chrono::duration<double>(endTime - startTime).count();
+    std::cout << elap << "s serial\n";
     }
 
-    // Same exercise, with a future
+    // Same exercise, with a future...
     std::vector<std::future<double>> futures;
+    // Set up the tasks
     for(int i = 0; i < 10; ++i) {
         auto f = [](int handle){
             int kq = 1;
@@ -60,9 +64,17 @@ int main() {
         };
         futures.push_back(std::async(f, handles[i]));
     }
+    auto startTime = std::chrono::system_clock::now();
+    std::vector<double> parallel_outs;
     // Retrive and print the value stored in the future
     for(auto &e : futures) {
-        std::cout << e.get() << std::endl;
+        parallel_outs.push_back(e.get());
+    }
+    auto endTime = std::chrono::system_clock::now();
+    double elap = std::chrono::duration<double>(endTime - startTime).count();
+    std::cout << elap << "s parallel\n";
+    for (auto i = 0; i < serial_outs.size(); ++i){
+        std::cout << names[i] << ": " << serial_outs[i] << "; "parallel_outs[i] << std::endl;
     }
     return EXIT_SUCCESS;
 }
