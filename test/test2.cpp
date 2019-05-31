@@ -30,19 +30,24 @@ int main() {
         }
         handles.push_back(handle);
     }
+    const int repeats = 100;
 
     // Now we do a serial evaluation, calculation of the NBP temperature for each one
     std::vector<double> serial_outs;
     {
     auto startTime = std::chrono::system_clock::now();
     for (auto handle: handles){
-        int kq = 1;
-        int ierr = 0;
-        int handle_errcode = 0;
-        char herr[255];
-        double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
-        PQFLSHdll(handle, &handle_errcode, p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
-        serial_outs.push_back(T);
+        double Tavg = 0;
+        for (auto count = 0; 0 < repeats; ++count){
+            int kq = 1;
+            int ierr = 0;
+            int handle_errcode = 0;
+            char herr[255];
+            double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
+            PQFLSHdll(handle, &handle_errcode, p+count*1e-12, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
+            Tavg += T;
+        }
+        serial_outs.push_back(Tavg);
     }
     auto endTime = std::chrono::system_clock::now();
     double elap = std::chrono::duration<double>(endTime - startTime).count();
@@ -54,13 +59,17 @@ int main() {
     // Set up the tasks
     for(int i = 0; i < 10; ++i) {
         auto f = [](int handle){
-            int kq = 1;
-            int ierr = 0;
-            int handle_errcode = 0;
-            char herr[255];
-            double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
-            PQFLSHdll(handle, &handle_errcode, p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
-            return T;
+            double Tavg = 0;
+            for (auto count = 0; count < repeats; ++count){
+                int kq = 1;
+                int ierr = 0;
+                int handle_errcode = 0;
+                char herr[255];
+                double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
+                PQFLSHdll(handle, &handle_errcode, p+count*1e-12, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
+                Tavg += T;
+            }
+            return Tavg;
         };
         futures.push_back(std::async(f, handles[i]));
     }
