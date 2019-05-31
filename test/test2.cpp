@@ -15,7 +15,7 @@ int main() {
         int ierr = 0;
         char hfld[255] = std::string(255, " ").c_str();
         strcpy(hfld, names[1].c_str());
-        SETFLUIDSdll(handle, &handle_errcode, hfld, ierr);
+        SETFLUIDSdll(handle, &handle_errcode, hfld, ierr, 255);
         handles.push_back(handle);
     }
 
