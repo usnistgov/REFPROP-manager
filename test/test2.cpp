@@ -1,6 +1,7 @@
 
 #include "REFPROP-manager/REFPROP-manager.hpp"
 #include <string>
+#include <future>
 
 int main() {
 
@@ -30,16 +31,37 @@ int main() {
         handles.push_back(handle);
     }
 
+    // Now we do a serial evaluation, calculation of the NBP temperature for each one
+    std::vector<double> serial_outs;
     for (auto handle: handles){
-        // Now we do a serial evaluation, calculation of the NBP temperature for each one
         int kq = 1;
         int ierr = 0;
         int handle_errcode = 0;
         char herr[255];
         double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
         PQFLSHdll(handle, &handle_errcode, p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
-        std::cout << T << std::endl;
+        serial_outs.push_back(T);
+    }
+    for (auto i = 0; i < serial_outs.size(); ++i){
+        std::cout << names[i] << ": " << serial_outs[i];
     }
 
+    // Same exercise, with a future
+    std::vector<std::future<double>> futures;
+    for(int i = 0; i < 10; ++i) {
+        auto f = [](int handle){
+            int kq = 1;
+            int ierr = 0;
+            int handle_errcode = 0;
+            char herr[255];
+            double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
+            PQFLSHdll(handle, &handle_errcode, p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
+        }
+        futures.push_back(std::async(f, handles[i]));
+    }
+    // Retrive and print the value stored in the future
+    for(auto &e : futures) {
+        std::cout << e.get() << std::endl;
+    }
     return EXIT_SUCCESS;
 }
