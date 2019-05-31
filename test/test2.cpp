@@ -23,6 +23,10 @@ int main() {
         std::string name = names[1].c_str();
         strcpy(hfld, (name.c_str() + std::string(10001 - name.size(), ' ')).c_str());
         SETFLUIDSdll(handle, &handle_errcode, hfld, ierr, 10000);
+        if (ierr != 0){
+            std::cout << "Setting fluids failed" << std::endl;
+            return EXIT_FAILURE;   
+        }
         handles.push_back(handle);
     }
 
