@@ -38,7 +38,7 @@ int main() {
     auto startTime = std::chrono::system_clock::now();
     for (auto handle: handles){
         double Tavg = 0;
-        for (auto count = 0; 0 < repeats; ++count){
+        for (auto count = 0; count < repeats; ++count){
             int kq = 1;
             int ierr = 0;
             int handle_errcode = 0;
@@ -75,13 +75,14 @@ int main() {
     }
     auto startTime = std::chrono::system_clock::now();
     std::vector<double> parallel_outs;
-    // Retrive and print the value stored in the future
     for(auto &e : futures) {
         parallel_outs.push_back(e.get());
     }
     auto endTime = std::chrono::system_clock::now();
     double elap = std::chrono::duration<double>(endTime - startTime).count();
     std::cout << elap << "s parallel\n";
+    
+    // Print the values; serial followed by parallel, should be the same
     for (auto i = 0; i < serial_outs.size(); ++i){
         std::cout << names[i] << ": " << serial_outs[i] << "; " << parallel_outs[i] << std::endl;
     }
