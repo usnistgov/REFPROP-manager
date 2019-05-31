@@ -85,7 +85,7 @@ public:
             throw std::invalid_argument("Constructed path to shared library is invalid:" + shared_library_path);
         }
 
-        auto load_method = AbstractSharedLibraryWrapper::load_method::FROM_FILE;
+        auto load_method = AbstractSharedLibraryWrapper::load_method::LOAD_LIBRARY;
         RP.reset(new NativeSharedLibraryWrapper(shared_library_path, load_method));
 
         // Check that the load was a success
