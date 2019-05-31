@@ -30,7 +30,7 @@ int main() {
         }
         handles.push_back(handle);
     }
-    const int repeats = 100;
+    const int repeats = 10000;
 
     // Now we do a serial evaluation, calculation of the NBP temperature for each one
     std::vector<double> serial_outs;
@@ -73,6 +73,7 @@ int main() {
         };
         futures.push_back(std::async(f, handles[i]));
     }
+    // Run and time...
     auto startTime = std::chrono::system_clock::now();
     std::vector<double> parallel_outs;
     for(auto &e : futures) {
