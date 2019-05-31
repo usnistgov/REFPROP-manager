@@ -11,7 +11,8 @@ int main() {
     for (auto i = 0; i < 10; ++i){
         char errmsg[255];
         int handle_errcode = 0;
-        int handle = construct_handle("D:/Program Files (x86)/REFPROP/", "REFPRP64.dll", &handle_errcode, errmsg, 255);
+        char* RPPREFIX = std::getenv("RPPREFIX");
+        int handle = construct_handle(RPPREFIX, "REFPRP64.dll", &handle_errcode, errmsg, 255);
         if (handle_errcode != 0){
             std::cout << "Could not load REFPROP; fail!\n";
             return EXIT_FAILURE;
