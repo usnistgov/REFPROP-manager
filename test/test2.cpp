@@ -12,9 +12,9 @@ int main() {
         char errmsg[255];
         int handle_errcode = 0;
         char* RPPREFIX = std::getenv("RPPREFIX");
-        int handle = construct_handle(RPPREFIX, "REFPRP64.dll", &handle_errcode, errmsg, 255);
+        int handle = construct_handle(RPPREFIX, "librefprop.so", &handle_errcode, errmsg, 255);
         if (handle_errcode != 0){
-            std::cout << "Could not load REFPROP; fail!\n";
+            std::cout << "Could not load REFPROP from "+RPPREFIX+"; fail!\n";
             return EXIT_FAILURE;
         }
         int ierr = 0;
