@@ -6,6 +6,20 @@ set (CMAKE_CXX_STANDARD 11)
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/externals/boost-cmake")
 
+macro(add_nix_libraries target)
+    # See https://stackoverflow.com/a/29871891
+    # Add DL and pthreads
+    FIND_PACKAGE ( Threads REQUIRED )
+    find_package(Threads REQUIRED)
+    if(THREADS_HAVE_PTHREAD_ARG)
+      target_compile_options(${target} PRIVATE "-pthread")
+    endif()
+    if(CMAKE_THREAD_LIBS_INIT)
+      target_link_libraries(${target} PRIVATE "${CMAKE_THREAD_LIBS_INIT}")
+    endif()
+endmacro()
+
+
 # Determine the name of the library to be built
 if (UNIX)
   set(NAME "refpropmanager")
@@ -43,6 +57,9 @@ target_compile_definitions(${NAMEexample} PRIVATE -DNOT_DLL)
 target_link_libraries(${NAMEexample} PRIVATE Boost::filesystem)
 set_property(TARGET Boost_filesystem PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET Boost_system PROPERTY POSITION_INDEPENDENT_CODE ON)
+if (NOT MSVC)
+    add_nix_libraries(${NAMEexample})
+endif()
 
 # THE SHARED LIBRARY
 # ------------------
