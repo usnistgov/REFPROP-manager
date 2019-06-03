@@ -2,90 +2,123 @@
 #include "REFPROP-manager/REFPROP-manager.hpp"
 #include <string>
 #include <future>
+#include "ThreadPool.h"
 
 int main() {
 
-    std::vector<std::string> names = {"METHANE","ETHANE","PROPANE","BUTANE","PENTANE","HEXANE","HEPTANE","OCTANE","NONANE","DECANE"};
+    std::vector<std::string> names = {"METHANE","ETHANE","PROPANE","BUTANE","PENTANE","HEXANE","HEPTANE","OCTANE"};//,"NONANE","DECANE"};
+    std::vector<REFPROPInstance> instances;
 
-    // Load 10 instances of REFPROP, and for each one, initialize it in serial(!)
-    std::vector<int> handles;
-    for (auto i = 0; i < 10; ++i){
+    // Load instances of REFPROP, and for each one, initialize it in serial(!)
+    for (auto i = 0; i < names.size(); ++i){
         char errmsg[255];
         int handle_errcode = 0;
         char* RPPREFIX = std::getenv("RPPREFIX");
-        int handle = construct_handle(RPPREFIX, "librefprop.so", &handle_errcode, errmsg, 255);
-        if (handle_errcode != 0){
+        try{
+            REFPROPInstance inn(RPPREFIX, "librefprop.so");
+            instances.push_back(std::move(inn));
+        }
+        catch(...){
             std::cout << "Could not load REFPROP from "+std::string(RPPREFIX)+"; fail!\n";
             std::cout << errmsg << std::endl;
             return EXIT_FAILURE;
         }
+        auto &handle = instances.back();
         int ierr = 0;
         char hfld[10001] = "";
         std::string name = names[i].c_str();
-        strcpy(hfld, (name.c_str() + std::string(10001 - name.size(), ' ')).c_str());
-        SETFLUIDSdll(handle, &handle_errcode, hfld, ierr, 10000);
+        strcpy(hfld, (name.c_str() + std::string(10000 - name.size(), ' ')).c_str());
+        handle.SETFLUIDSdll(hfld, ierr, 10000);
         if (ierr != 0){
             std::cout << "Setting fluids failed" << std::endl;
             return EXIT_FAILURE;
         }
-        handles.push_back(handle);
     }
-    const int repeats = 10000;
+    const int repeats = 1000000;
 
-    // Now we do a serial evaluation, calculation of the NBP temperature for each one
-    std::vector<double> serial_outs;
-    {
-    auto startTime = std::chrono::system_clock::now();
-    for (auto handle: handles){
+    // Calculation of the NBP temperature for each one
+    auto f = [](REFPROPInstance &RP, double &elap){
+        auto startTime = std::chrono::system_clock::now();
         double Tavg = 0;
+        int kq = 1;
+        int ierr = 0;
+        char herr[255];
+        double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
         for (auto count = 0; count < repeats; ++count){
-            int kq = 1;
-            int ierr = 0;
-            int handle_errcode = 0;
-            char herr[255];
-            double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325+count*1e-12, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
-            PQFLSHdll(handle, &handle_errcode, p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
+            p = 101.325+100*count/repeats;
+            RP.PQFLSHdll(p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
             Tavg += T;
         }
-        serial_outs.push_back(Tavg);
-    }
-    auto endTime = std::chrono::system_clock::now();
-    double elap = std::chrono::duration<double>(endTime - startTime).count();
-    std::cout << elap << "s serial\n";
+        auto endTime = std::chrono::system_clock::now();
+        elap = std::chrono::duration<double>(endTime - startTime).count();
+        return Tavg;
+    };
+
+    // Now we do a serial evaluation, 
+    std::vector<double> serial_outs;
+    {
+        auto startTime = std::chrono::system_clock::now();
+        for (auto &handle: instances){
+            double elap;
+            serial_outs.push_back(f(handle, elap));
+            std::cout << elap << std::endl;
+        }
+        auto endTime = std::chrono::system_clock::now();
+        double elap = std::chrono::duration<double>(endTime - startTime).count();
+        std::cout << elap << "s serial\n";
     }
 
     // Same exercise, with a future...
-    std::vector<std::future<double>> futures;
-    // Set up the tasks
-    for(int i = 0; i < 10; ++i) {
-        auto f = [](int handle){
-            double Tavg = 0;
-            for (auto count = 0; count < repeats; ++count){
-                int kq = 1;
-                int ierr = 0;
-                int handle_errcode = 0;
-                char herr[255];
-                double z[20] = { 1.0 }, x[20] = { 1.0 }, y[20] = { 1.0 }, T = -100, p = 101.325+count*1e-12, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
-                PQFLSHdll(handle, &handle_errcode, p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
-                Tavg += T;
-            }
-            return Tavg;
-        };
-        futures.push_back(std::async(f, handles[i]));
+    std::vector<double> parallel_outs, parallel_times(names.size());
+    {
+        std::vector<std::future<double> > futures;
+        // Set up the tasks
+        for(int i = 0; i < names.size(); ++i) {
+            double &elap = parallel_times[i];
+            REFPROPInstance &inst = instances[i];
+            futures.push_back(
+                std::async([f, &elap, &inst](){auto o = f(inst, elap); std::cout << elap << std::endl; return o;})
+            );
+        }
+        // Run and time...
+        auto startTime = std::chrono::system_clock::now();
+        for(auto &e : futures) {
+            parallel_outs.push_back(e.get());
+        }
+        auto endTime = std::chrono::system_clock::now();
+        double elap = std::chrono::duration<double>(endTime - startTime).count();
+        std::cout << elap << "s parallel w/ futures\n";
     }
-    // Run and time...
-    auto startTime = std::chrono::system_clock::now();
-    std::vector<double> parallel_outs;
-    for(auto &e : futures) {
-        parallel_outs.push_back(e.get());
+
+    // And this time with a ThreadPool
+    std::vector<double> pool_outs(names.size()), pool_times(names.size());
+    {
+        // Create the thread(s).
+        ThreadPool pool(8); 
+
+        // Set up the tasks
+        for(int i = 0; i < names.size(); ++i) {
+            auto &handle = instances[i];
+            double &o = pool_outs[i], &elap = pool_times[i];
+            auto f_wrap = [&o, f, &handle, &elap](){
+                o = f(handle, elap);
+            };
+            pool.AddJob(f_wrap);
+        }
+        // Run and time...
+        auto startTime = std::chrono::system_clock::now();
+            pool.WaitAll();
+        auto endTime = std::chrono::system_clock::now();
+        auto elap = std::chrono::duration<double>(endTime - startTime).count();
+        for (auto i = 0; i < pool_times.size(); ++i){
+            std::cout << pool_times[i] << std::endl;
+        }
+        std::cout << elap << "s pool\n";
     }
-    auto endTime = std::chrono::system_clock::now();
-    double elap = std::chrono::duration<double>(endTime - startTime).count();
-    std::cout << elap << "s parallel\n";
     
-    // Print the values; serial followed by parallel, should be the same
-    for (auto i = 0; i < serial_outs.size(); ++i){
-        std::cout << names[i] << ": " << serial_outs[i] << "; " << parallel_outs[i] << std::endl;
-    }
+    // // Print the values; serial followed by parallel, followed by pool, should be the same
+    // for (auto i = 0; i < serial_outs.size(); ++i){
+    //     std::cout << names[i] << ": " << serial_outs[i] << "; " << parallel_outs[i]  << "; " << pool_outs[i] << std::endl;
+    // }
     return EXIT_SUCCESS;
 }

@@ -61,8 +61,8 @@ static void HandleExceptionNoMsg(int *errcode)
 #define CONVENTION 
 #else
 #include "EXPORTS.h"
-
 #endif
+
 class REFPROPInstance
 {
 private:
@@ -72,8 +72,8 @@ private:
 #define X(name) typedef name ## _TYPE * name ## _POINTER;
         LIST_OF_REFPROP_FUNCTION_NAMES
 #undef X
+    std::unique_ptr<NativeSharedLibraryWrapper> RP;
 
-        std::unique_ptr<NativeSharedLibraryWrapper> RP;
 public:
     REFPROPInstance(const std::string &path, const std::string &shared_library_filename)
     {
@@ -98,6 +98,7 @@ public:
         char * c_path = const_cast<char *>(path.c_str());
         SETPATHdll(c_path, path.size());
     }
+    REFPROPInstance(REFPROPInstance&& data): RP(std::move(data.RP)) {}
     ~REFPROPInstance() {
         RP.release();
     }

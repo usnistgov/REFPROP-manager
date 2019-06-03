@@ -2,7 +2,7 @@ project(REFPROPManager)
 cmake_minimum_required(VERSION 3.1)
 
 # We heavily use C++11, C++11 support is required
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/externals/boost-cmake")
 
@@ -55,6 +55,7 @@ endif()
 add_executable(${NAMEexample} ${SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/test/test2.cpp")
 target_compile_definitions(${NAMEexample} PRIVATE -DNOT_DLL)
 target_link_libraries(${NAMEexample} PRIVATE Boost::filesystem)
+target_include_directories(${NAMEexample} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/externals/ThreadPool2")
 set_property(TARGET Boost_filesystem PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET Boost_system PROPERTY POSITION_INDEPENDENT_CODE ON)
 if (NOT MSVC)
