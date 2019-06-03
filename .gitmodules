@@ -7,3 +7,6 @@
 [submodule "externals/boost-cmake"]
 	path = externals/boost-cmake
 	url = https://github.com/Orphis/boost-cmake.git
+[submodule "externals/ThreadPool2"]
+	path = externals/ThreadPool2
+	url = https://github.com/domgho/ThreadPool2.git
