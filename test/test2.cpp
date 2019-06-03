@@ -6,7 +6,7 @@
 
 int main() {
 
-    std::vector<std::string> names = {"METHANE","ETHANE","PROPANE","BUTANE","PENTANE","HEXANE","HEPTANE","OCTANE"};//,"NONANE","DECANE"};
+    std::vector<std::string> names = {"METHANE","ETHANE","PROPANE","BUTANE","PENTANE","HEXANE","HEPTANE","OCTANE","NONANE","DECANE",};
     std::vector<REFPROPInstance> instances;
 
     // Load instances of REFPROP, and for each one, initialize it in serial(!)
@@ -94,7 +94,7 @@ int main() {
     std::vector<double> pool_outs(names.size()), pool_times(names.size());
     {
         // Create the thread(s).
-        ThreadPool pool(8); 
+        ThreadPool pool(10); 
 
         // Set up the tasks
         for(int i = 0; i < names.size(); ++i) {
@@ -116,9 +116,9 @@ int main() {
         std::cout << elap << "s pool\n";
     }
     
-    // // Print the values; serial followed by parallel, followed by pool, should be the same
-    // for (auto i = 0; i < serial_outs.size(); ++i){
-    //     std::cout << names[i] << ": " << serial_outs[i] << "; " << parallel_outs[i]  << "; " << pool_outs[i] << std::endl;
-    // }
+    // Print the values; serial followed by parallel, followed by pool, should be the same
+    for (auto i = 0; i < serial_outs.size(); ++i){
+        std::cout << names[i] << ": " << serial_outs[i] << "; " << parallel_outs[i]  << "; " << pool_outs[i] << std::endl;
+    }
     return EXIT_SUCCESS;
 }

@@ -105,7 +105,7 @@ public:
 
     // And now, totally magical, the use of variadic function arguments in concert with type macros
     // Add many methods, each corresponding to a 1-to-1 wrapper of a function from the shared library
-#define X(name) template<class ...Args> void name(Args&&... args){ return RP->getAddress<name ## _POINTER>(#name)(std::forward<Args>(args)...); };
+#define X(name) template<class ...Args> void name(Args&&... args){ return ((name ## _POINTER) RP->get_method_pointer(#name))(std::forward<Args>(args)...); };
     LIST_OF_REFPROP_FUNCTION_NAMES
 #undef X
 };
