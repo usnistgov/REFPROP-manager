@@ -45,7 +45,7 @@ int main() {
     const int repeats = 1000000;
 
     // Calculation of the NBP temperature for each one
-    auto f = [](REFPROPInstance &RP, double &elap){
+    auto f = [repeats](REFPROPInstance &RP, double &elap){
         auto startTime = std::chrono::system_clock::now();
         double Tavg = 0;
         int kq = 1;
