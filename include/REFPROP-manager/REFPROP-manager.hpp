@@ -85,7 +85,11 @@ public:
             throw std::invalid_argument("Constructed path to shared library is invalid:" + shared_library_path);
         }
 
+#if !defined(WIN32)
         auto load_method = AbstractSharedLibraryWrapper::load_method::LOAD_LIBRARY_PRISTINE;
+#else
+        auto load_method = AbstractSharedLibraryWrapper::load_method::FROM_FILE;
+#endif
         RP.reset(new NativeSharedLibraryWrapper(shared_library_path, load_method));
 
         // Check that the load was a success
