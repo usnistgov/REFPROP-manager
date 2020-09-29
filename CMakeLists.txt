@@ -1,7 +1,7 @@
 project(REFPROPManager)
 cmake_minimum_required(VERSION 3.1)
 
-# We heavily use C++11, C++11 support is required
+# We heavily use modern C++, C++17 support is required
 set (CMAKE_CXX_STANDARD 17)
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/externals/boost-cmake")
@@ -18,7 +18,6 @@ macro(add_nix_libraries target)
       target_link_libraries(${target} PRIVATE "${CMAKE_THREAD_LIBS_INIT}")
     endif()
 endmacro()
-
 
 # Determine the name of the library to be built
 if (UNIX)
@@ -43,24 +42,32 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/Memo
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 set(NAMEstatic "${NAME}static")
-set(NAMEexample "${NAME}example")
 
 set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/manager.cpp")
 if (WIN32)
   list(APPEND SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/MemoryModule/MemoryModule.c")
 endif()
 
-# THE EXAMPLE
-# -----------
-add_executable(${NAMEexample} ${SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/test/test2.cpp")
-target_compile_definitions(${NAMEexample} PRIVATE -DNOT_DLL)
-target_link_libraries(${NAMEexample} PRIVATE Boost::filesystem)
-target_include_directories(${NAMEexample} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/externals/ThreadPool2")
-set_property(TARGET Boost_filesystem PROPERTY POSITION_INDEPENDENT_CODE ON)
-set_property(TARGET Boost_system PROPERTY POSITION_INDEPENDENT_CODE ON)
-if (NOT MSVC)
-    add_nix_libraries(${NAMEexample})
-endif()
+# THE EXAMPLES
+# ------------
+
+file(GLOB_RECURSE TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/test/test*.cpp")
+foreach (testfile ${TEST_SOURCES})
+
+  get_filename_component(snippet_name ${testfile} NAME)
+  get_filename_component(snippet_exe ${testfile} NAME_WE)
+
+  set(NAMEexample "${snippet_exe}")
+  add_executable(${NAMEexample} ${SOURCES} "${testfile}")
+  target_compile_definitions(${NAMEexample} PRIVATE -DNOT_DLL)
+  target_link_libraries(${NAMEexample} PRIVATE Boost::filesystem)
+  target_include_directories(${NAMEexample} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/externals/ThreadPool2")
+  set_property(TARGET Boost_filesystem PROPERTY POSITION_INDEPENDENT_CODE ON)
+  set_property(TARGET Boost_system PROPERTY POSITION_INDEPENDENT_CODE ON)
+  if (NOT MSVC)
+      add_nix_libraries(${NAMEexample})
+  endif()
+endforeach()
 
 # THE SHARED LIBRARY
 # ------------------
