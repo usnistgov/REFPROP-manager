@@ -1,4 +1,6 @@
+/**
 
+*/
 #include "REFPROP-manager/REFPROP-manager.hpp"
 #include <string>
 #include <future>
@@ -9,13 +11,19 @@ int main() {
     std::vector<std::string> names = {"METHANE","ETHANE","PROPANE","BUTANE","PENTANE","HEXANE","HEPTANE","OCTANE","NONANE","DECANE",};
     std::vector<REFPROPInstance> instances;
 
-    // Load instances of REFPROP, and for each one, initialize it in serial(!)
+    // Load instances of REFPROP from the path specified by RPPREFIX, and for each one, 
+    // initialize it in serial(!). Initialization must be caried out in serial to avoid 
+    // clashing reads.
     for (auto i = 0; i < names.size(); ++i){
         char errmsg[255];
         int handle_errcode = 0;
         char* RPPREFIX = std::getenv("RPPREFIX");
         try{
+#if !defined(WIN32)
             REFPROPInstance inn(RPPREFIX, "librefprop.so");
+#else
+            REFPROPInstance inn(RPPREFIX, "REFPRP64.dll"); // Change this if you use 32-bit builds
+#endif
             instances.push_back(std::move(inn));
         }
         catch(...){
