@@ -1,0 +1,12 @@
+version: '3.2'
+
+services:
+  app:
+    cpus: 0.0
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - type: bind
+        source: ./output
+        target: /output
