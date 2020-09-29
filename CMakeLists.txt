@@ -17,6 +17,7 @@ macro(add_nix_libraries target)
     if(CMAKE_THREAD_LIBS_INIT)
       target_link_libraries(${target} PRIVATE "${CMAKE_THREAD_LIBS_INIT}")
     endif()
+    target_link_libraries(${target} PRIVATE ${CMAKE_DL_LIBS})
 endmacro()
 
 # Determine the name of the library to be built
@@ -40,8 +41,6 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/externals/REFPROP-headers")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/externals/MemoryModule")
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
-
-set(NAMEstatic "${NAME}static")
 
 set(SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/manager.cpp")
 if (WIN32)
@@ -88,5 +87,4 @@ add_library(${NAME} SHARED ${SOURCES})
 target_link_libraries(${NAME} PRIVATE Boost::filesystem)
 if (UNIX)
   target_link_libraries(${NAME} PRIVATE ${CMAKE_DL_LIBS})
-  target_link_libraries(${NAMEexample} PRIVATE ${CMAKE_DL_LIBS})
 endif()
