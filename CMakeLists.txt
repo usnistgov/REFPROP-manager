@@ -4,6 +4,14 @@ cmake_minimum_required(VERSION 3.1)
 # We heavily use modern C++, C++17 support is required
 set (CMAKE_CXX_STANDARD 17)
 
+# If a specific downloaded version of boost can be found in the externals folder, use it, otherwise 
+# allow boost-cmake to pull in boost sources
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/externals/boost_1_71_0.tar.bz2")
+    message(STATUS "Using local copy of boost")
+    set(BOOST_URL "${CMAKE_CURRENT_SOURCE_DIR}/externals/boost_1_71_0.tar.bz2" CACHE STRING  "Boost zip file path")
+    set(BOOST_URL_SHA256 "d73a8da01e8bf8c7eda40b4c84915071a8c8a0df4a6734537ddde4a8580524ee" CACHE STRING  "Boost zip file SHA256 checksum")
+endif()
+
 add_subdirectory("${CMAKE_SOURCE_DIR}/externals/boost-cmake")
 
 macro(add_nix_libraries target)
