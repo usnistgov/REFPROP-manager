@@ -34,9 +34,9 @@ manager = ct.REFPROPLibraryManager(r'D:\Code\REFPROP-manager\msvc\Release\REFMAN
 RP2 = manager.get_instance(path,"REFPRP64.dll")
 
 for RP in RP1,RP2:
-    baseSI = RP.GETENUMdll(0, "MOLAR BASE SI  ").iEnum
+    RP.SETPATHdll(os.getenv('RPPREFIX')) # Or the path containing your FLUIDS and MIXTURES folders
     iMass = 0; iFlag = 0
-    r = RP.REFPROPdll(r"AMMONIA.FLD", "TD","ETA",baseSI,iMass,iFlag,398.788,7044.7,[1.0]+[0.0]*19)
+    r = RP.REFPROPdll(r"AMMONIA.FLD", "TD","ETA",RP.MOLAR_BASE_SI,baseSI,iMass,iFlag,398.788,7044.7,[1.0]+[0.0]*19)
     print(r)
 ```
 
