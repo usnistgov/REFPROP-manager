@@ -94,3 +94,21 @@ cmake --build . --config Release
 ```
 
 When building with visual studio, the output DLL will be in the ``Release`` folder.  For more information on cmake options, please read the cmake documentation.
+
+Here is a complete build script for checking out the necessary parts and building all the shared libraries with the necessary flags:
+```
+git clone https://github.com/usnistgov/REFPROP-cmake  --recursive
+cd REFPROP-cmake
+mkdir bld
+cd bld
+cmake .. -DREFPROP_FORTRAN_PATH="/Users/yyy/Desktop/manage/BETA/FORTRAN" -DREFPROP_DYNAMIC_RUNTIMES=ON
+cmake --build . --config Release
+cd ../..
+
+git clone https://github.com/usnistgov/REFPROP-manager --recursive
+cd REFPROP-manager
+mkdir bld
+cd bld
+cmake ..
+cmake --build . --config Release
+```
