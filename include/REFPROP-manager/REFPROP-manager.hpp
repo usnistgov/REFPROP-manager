@@ -104,7 +104,7 @@ public:
     }
     REFPROPInstance(REFPROPInstance&& data): RP(std::move(data.RP)) {}
     ~REFPROPInstance() {
-        RP.release();
+        RP.reset();
     }
 
     // And now, totally magical, the use of variadic function arguments in concert with type macros
