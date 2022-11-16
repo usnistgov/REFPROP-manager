@@ -101,7 +101,7 @@ git clone https://github.com/usnistgov/REFPROP-cmake  --recursive
 cd REFPROP-cmake
 mkdir bld
 cd bld
-cmake .. -DREFPROP_FORTRAN_PATH="/Users/yyy/Desktop/manage/BETA/FORTRAN" -DREFPROP_DYNAMIC_RUNTIMES=ON
+cmake .. -DREFPROP_FORTRAN_PATH="/Users/yyy/Desktop/manage/BETA/FORTRAN" -DREFPROP_DYNAMIC_RUNTIME=ON
 cmake --build . --config Release
 cd ../..
 
