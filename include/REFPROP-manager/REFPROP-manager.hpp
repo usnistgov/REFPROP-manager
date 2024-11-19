@@ -86,7 +86,11 @@ public:
         }
 
 #if !defined(WIN32)
+#if !defined(__APPLE__)
         auto load_method = AbstractSharedLibraryWrapper::load_method::LOAD_LIBRARY_PRISTINE;
+#else
+        auto load_method = AbstractSharedLibraryWrapper::load_method::LOAD_LIBRARY;
+#endif
 #else
         auto load_method = AbstractSharedLibraryWrapper::load_method::FROM_FILE;
 #endif

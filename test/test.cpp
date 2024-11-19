@@ -12,7 +12,11 @@ int main() {
 #if defined(WIN32)
     int handle = construct_handle(RPPREFIX, "REFPRP64.dll", &handle_errcode, errmsg, 255);
 #else
+#if defined(__APPLE__)
+    int handle = construct_handle(RPPREFIX, "librefprop.dylib", &handle_errcode, errmsg, 255);
+#else
     int handle = construct_handle(RPPREFIX, "librefprop.so", &handle_errcode, errmsg, 255);
+#endif
 #endif
     if (handle_errcode != 0) {
         throw InvalidHandle(errmsg, handle_errcode);
